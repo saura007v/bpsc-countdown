@@ -24,7 +24,7 @@ def send_telegram_message(message):
     except Exception as e:
         print(f"Error sending message: {e}")
 
-# Calculate time left
+# Calculate time left including seconds
 now = datetime.datetime.now()
 diff = int((TARGET_DATE - now).total_seconds())
 
@@ -34,8 +34,9 @@ else:
     days = diff // 86400
     hours = (diff % 86400) // 3600
     mins = (diff % 3600) // 60
+    secs = diff % 60
     
-    # Simple progress calculation
+    # Progress calculation
     fraction = min(max(diff / TOTAL_SECONDS_WINDOW, 0), 1)
     total_blocks = 10
     filled = int((1 - fraction) * total_blocks)
@@ -47,7 +48,7 @@ else:
         "📅 Date: 25 October 2026\n\n"
         f"⏳ Progress: `{bar}` {pct}%\n\n"
         "Time Left:\n"
-        f"*{days}* Days | *{hours}*h *{mins}*m\n\n"
+        f"*{days}* Days | *{hours}*h *{mins}*m *{secs}*s\n\n"
         "_Stay focused, revision mode ON!_ 💪"
     )
 
