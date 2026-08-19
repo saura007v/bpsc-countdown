@@ -1,0 +1,26 @@
+name: BPSC Countdown Automation
+
+on:
+  schedule:
+    # Runs automatically every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allows you to trigger it manually anytime with one click
+
+jobs:
+  run-countdown:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Run countdown script
+        env:
+          BOT_TOKEN: "8880538925:AAFpfcBUHgpcDyHefbEeKUU8F4vH6cFqt0w"
+          CHAT_ID: "@bpsc72countdown"
+        run: |
+          python bpsc_countdown.py
