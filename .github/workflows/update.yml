@@ -2,7 +2,8 @@ name: BPSC Countdown Automation
 
 on:
   schedule:
-    - cron: '0 * * * *' # Runs every 1 hour
+  - cron: '17 * * * *'
+ # Runs every 1 hour
   workflow_dispatch:
 
 jobs:
