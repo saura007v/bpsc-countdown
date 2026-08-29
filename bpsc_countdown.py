@@ -12,8 +12,8 @@ CHAT_ID = os.environ.get("CHAT_ID")
 # Set timezone explicitly to Indian Standard Time (IST)
 IST = ZoneInfo("Asia/Kolkata")
 
-# Target: 25 October 2026 at 11:00:00 AM IST
-TARGET_DATE = datetime.datetime(2026, 10, 25, 11, 0, 0, tzinfo=IST)
+# Target: Start of 25 October 2026 (Midnight 00:00:00 IST)
+TARGET_DATE = datetime.datetime(2026, 10, 25, 0, 0, 0, tzinfo=IST)
 TOTAL_SECONDS_WINDOW = 90 * 86400  # 90-day progress window baseline
 
 def telegram_api(method, data):
@@ -33,7 +33,7 @@ def main():
     diff = int((TARGET_DATE - now).total_seconds())
 
     if diff <= 0:
-        text = "🚨 The BPSC 72nd Prelims Exam is TODAY! Best of luck! 🚀📚"
+        text = "🚨 The BPSC 72nd Prelims Exam day is HERE! Best of luck! 🚀📚"
     else:
         days = diff // 86400
         hours = (diff % 86400) // 3600
@@ -48,7 +48,7 @@ def main():
 
         text = (
             "📚 *BPSC 72nd Prelims Countdown* 📚\n"
-            "📅 Target: 25 October 2026, 11:00 AM IST\n\n"
+            "📅 Target: 25 October 2026\n\n"
             f"⏳ Progress: `{bar}` {pct}%\n\n"
             "Time Left:\n"
             f"*{days}* Days | *{hours}*h *{mins}*m *{secs}*s\n\n"
