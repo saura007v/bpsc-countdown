@@ -35,14 +35,27 @@ def main():
     if diff <= 0:
         text = "🚨 The BPSC 72nd Prelims Exam is TODAY! Best of luck! 🚀📚"
     else:
-        # Calendar-based days that decrement strictly at midnight (12:00 AM)
-        days = (TARGET_DATE.date() - now.date()).days - 1
+        # Calendar days difference
+        days = (TARGET_DATE.date() - now.date()).days
         
-        # Remaining time after full calendar days for hours/minutes/seconds
-        remaining_seconds = diff - (days * 86400)
-        hours = remaining_seconds // 3600
-        mins = (remaining_seconds % 3600) // 60
-        secs = remaining_seconds % 60
+        # If we are past 11:00 AM on a given day, adjust day count cleanly
+        if now.hour >= 11:
+            days -= 1
+
+        # Correct hours calculation relative to the current day's 11 AM mark (0 to 23 hours)
+        # Find how many seconds into the current day we are past 11:00 AM, or countdown to it
+        target_today = now.replace(hour=11, minute=0, second=0, microsecond=0)
+        if now >= target_today:
+            # If past 11 AM today, look towards tomorrow's 11 AM
+            next_target = target_today + datetime.timedelta(days=1)
+        else:
+            next_target = target_today
+            
+        sub_diff = int((TARGET_DATE - now).total_seconds())
+        # Clean standard hour/minute/second extraction without overflowing past 24
+        hours = (sub_diff % 86400) // 3600
+        mins = (sub_diff % 3600) // 60
+        secs = sub_diff % 60
         
         fraction = min(max(diff / TOTAL_SECONDS_WINDOW, 0), 1)
         total_blocks = 10
