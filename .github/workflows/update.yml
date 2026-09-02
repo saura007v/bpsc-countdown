@@ -2,13 +2,21 @@ name: BPSC Countdown Automation
 
 on:
   schedule:
-  - cron: '17 * * * *'
- # Runs every 1 hour
+    - cron: '17 */6 * * *'   # fallback safety net only, not the primary driver
   workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write   # lets GITHUB_TOKEN call workflow_dispatch to relaunch itself
+
+concurrency:
+  group: bpsc-countdown
+  cancel-in-progress: false   # don't kill a running loop if a new trigger fires
 
 jobs:
   run-countdown:
     runs-on: ubuntu-latest
+    timeout-minutes: 355   # stay under GitHub's 360min (6h) hard job cap
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
@@ -20,8 +28,10 @@ jobs:
 
       - name: Run countdown script
         env:
-          BOT_TOKEN: "8880538925:AAFpfcBUHgpcDyHefbEeKUU8F4vH6cFqt0w"
-          CHAT_ID: "@bpsc72countdown"
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WORKFLOW_FILE: update.yml
         run: |
           python bpsc_countdown.py
 
