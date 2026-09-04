@@ -44,11 +44,9 @@ def telegram_api(method, data):
 def build_text():
     now = datetime.datetime.now(IST)
     diff = int((TARGET_DATE - now).total_seconds())
-
     if diff <= 0:
-        return "🚨 The BPSC 72nd Prelims Exam is TODAY! Best of luck! 🚀📚", diff
+        return "🎯 *BPSC 72ND PRELIMS — EXAM DAY*\nAll the best. Trust your preparation.", diff
 
-    # Calendar days difference
     days = (TARGET_DATE.date() - now.date()).days
     if now.hour >= 11:
         days -= 1
@@ -59,18 +57,26 @@ def build_text():
     secs = sub_diff % 60
 
     fraction = min(max(diff / TOTAL_SECONDS_WINDOW, 0), 1)
-    total_blocks = 10
+    total_blocks = 12
     filled = int((1 - fraction) * total_blocks)
-    bar = "█" * filled + "░" * (total_blocks - filled)
+    bar = "▰" * filled + "▱" * (total_blocks - filled)
     pct = int((1 - fraction) * 100)
 
+    # Telegram's legacy Markdown has no card/grid support, so the "dashboard
+    # cards" look is approximated with a monospace code block — numbers on
+    # one line, labels aligned underneath on the next.
+    cols = [("days", days), ("hrs", hours), ("min", mins), ("sec", secs)]
+    value_line = "  ".join(f"{v:>4}" for _, v in cols)
+    label_line = "  ".join(f"{l:>4}" for l, _ in cols)
+
     text = (
-        "📚 *BPSC 72nd Prelims Countdown* 📚\n"
-        "📅 Target: 25 October 2026, 11:00 AM\n\n"
-        f"⏳ Progress: `{bar}` {pct}%\n\n"
-        "Time Left:\n"
-        f"*{days}* Days | *{hours}*h *{mins}*m *{secs}*s\n\n"
-        "_Stay focused, revision mode ON!_ 💪"
+        "🎯 *BPSC 72ND PRELIMS*\n"
+        "📅 25 Oct 2026, 11:00 AM\n\n"
+        "```\n"
+        f"{value_line}\n"
+        f"{label_line}\n"
+        "```\n"
+        f"`{bar}` {pct}% prepared"
     )
     return text, diff
 
