@@ -46,11 +46,9 @@ def build_text():
     diff = int((TARGET_DATE - now).total_seconds())
     if diff <= 0:
         return "🎯 *BPSC 72ND PRELIMS — EXAM DAY*\nAll the best. Trust your preparation.", diff
-
     days = (TARGET_DATE.date() - now.date()).days
     if now.hour >= 11:
         days -= 1
-
     sub_diff = int((TARGET_DATE - now).total_seconds())
     hours = (sub_diff % 86400) // 3600
     mins = (sub_diff % 3600) // 60
@@ -62,9 +60,16 @@ def build_text():
     bar = "▰" * filled + "▱" * (total_blocks - filled)
     pct = int((1 - fraction) * 100)
 
-    # Telegram's legacy Markdown has no card/grid support, so the "dashboard
-    # cards" look is approximated with a monospace code block — numbers on
-    # one line, labels aligned underneath on the next.
+    # Short status tag so the bare percentage has some context attached
+    if pct < 33:
+        status = "Early days — build the base"
+    elif pct < 66:
+        status = "Steady pace — keep going"
+    elif pct < 90:
+        status = "Final stretch — stay sharp"
+    else:
+        status = "Almost there — hold the line"
+
     cols = [("days", days), ("hrs", hours), ("min", mins), ("sec", secs)]
     value_line = "  ".join(f"{v:>4}" for _, v in cols)
     label_line = "  ".join(f"{l:>4}" for l, _ in cols)
@@ -76,7 +81,8 @@ def build_text():
         f"{value_line}\n"
         f"{label_line}\n"
         "```\n"
-        f"`{bar}` {pct}% prepared"
+        f"`{bar}` {pct}% prepared — _{status}_\n\n"
+        "_Stay away from unnecessary discussions. Keep studying._"
     )
     return text, diff
 
